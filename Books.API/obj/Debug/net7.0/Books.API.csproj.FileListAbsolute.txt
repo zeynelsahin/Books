@@ -66,3 +66,5 @@ C:\Users\zeynels\Desktop\Git Project\Books\Books.API\obj\Debug\net7.0\refint\Boo
 C:\Users\zeynels\Desktop\Git Project\Books\Books.API\obj\Debug\net7.0\Books.API.pdb
 C:\Users\zeynels\Desktop\Git Project\Books\Books.API\obj\Debug\net7.0\Books.API.genruntimeconfig.cache
 C:\Users\zeynels\Desktop\Git Project\Books\Books.API\obj\Debug\net7.0\ref\Books.API.dll
+C:\Users\zeynels\Desktop\Git Project\Books\Books.API\bin\Debug\net7.0\AutoMapper.dll
+C:\Users\zeynels\Desktop\Git Project\Books\Books.API\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

@@ -5,7 +5,7 @@ namespace Books.API.DbContexts;
 
 public class BooksContext : DbContext
 {
-    public DbSet<Book> Books { get; set; } = null;
+    public DbSet<Book>? Books { get; set; } = null;
 
     public BooksContext(DbContextOptions<BooksContext> options) : base(options)
     {
@@ -14,7 +14,7 @@ public class BooksContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
           modelBuilder.Entity<Author>().HasData(
-            new(Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
+        new(Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
                 "George",
                 "RR Martin"),
             new(Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),

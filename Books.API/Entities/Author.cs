@@ -10,16 +10,16 @@ public class Author
 
     [Required]
     [MaxLength(150)]
-    public string Name { get; set; }
+    public string FirstName { get; set; }
 
     [Required]
     [MaxLength(150)]
     public string LastName { get; set; }
 
-    public Author(Guid type, string name, string lastName)
+    public Author(Guid type, string firstName, string lastName)
     {
         Type = type;
-        Name = name;
+        FirstName = firstName;
         LastName = lastName;
     }
 }

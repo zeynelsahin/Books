@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Books.API.Migrations
 {
     [DbContext(typeof(BooksContext))]
-    [Migration("20230209190748_Initial")]
+    [Migration("20230210162457_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -26,12 +26,12 @@ namespace Books.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LastName")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("TEXT");
@@ -44,26 +44,26 @@ namespace Books.API.Migrations
                         new
                         {
                             Type = new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
-                            LastName = "RR Martin",
-                            Name = "George"
+                            FirstName = "George",
+                            LastName = "RR Martin"
                         },
                         new
                         {
                             Type = new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
-                            LastName = "Fry",
-                            Name = "Stephen"
+                            FirstName = "Stephen",
+                            LastName = "Fry"
                         },
                         new
                         {
                             Type = new Guid("24810dfc-2d94-4cc7-aab5-cdf98b83f0c9"),
-                            LastName = "Elroy",
-                            Name = "James"
+                            FirstName = "James",
+                            LastName = "Elroy"
                         },
                         new
                         {
                             Type = new Guid("2902b665-1190-4c70-9915-b9c2d7680450"),
-                            LastName = "Adams",
-                            Name = "Douglas"
+                            FirstName = "Douglas",
+                            LastName = "Adams"
                         });
                 });
 

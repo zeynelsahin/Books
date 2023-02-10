@@ -18,7 +18,7 @@ namespace Books.API.Migrations
                 columns: table => new
                 {
                     Type = table.Column<Guid>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
                     LastName = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false)
                 },
                 constraints: table =>
@@ -48,13 +48,13 @@ namespace Books.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "Authors",
-                columns: new[] { "Type", "LastName", "Name" },
+                columns: new[] { "Type", "FirstName", "LastName" },
                 values: new object[,]
                 {
-                    { new Guid("24810dfc-2d94-4cc7-aab5-cdf98b83f0c9"), "Elroy", "James" },
-                    { new Guid("2902b665-1190-4c70-9915-b9c2d7680450"), "Adams", "Douglas" },
-                    { new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"), "RR Martin", "George" },
-                    { new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96"), "Fry", "Stephen" }
+                    { new Guid("24810dfc-2d94-4cc7-aab5-cdf98b83f0c9"), "James", "Elroy" },
+                    { new Guid("2902b665-1190-4c70-9915-b9c2d7680450"), "Douglas", "Adams" },
+                    { new Guid("d28888e9-2ba9-473a-a40f-e38cb54f9b35"), "George", "RR Martin" },
+                    { new Guid("da2fd609-d754-4feb-8acd-c4f9ff13ba96"), "Stephen", "Fry" }
                 });
 
             migrationBuilder.InsertData(

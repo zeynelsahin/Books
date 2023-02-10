@@ -14,7 +14,7 @@ public class Book
     [MaxLength(150)]
     public string? Description { get; set; }
     public Guid AuthorId { get; set; }
-    public Author Author { get; set; }
+    public Author Author { get; set; } = null!;
 
     public Book(Guid id,Guid authorId, string title, string? description)
     {
