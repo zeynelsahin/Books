@@ -72,4 +72,67 @@ public class BooksRepository : IBooksRepository
                 })
             : null;
     }
+    public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId)
+    {
+        var httpclient = _httpClientFactory.CreateClient();
+        var bookCovers = new List<BookCoverDto>();
+        var bookCoverUrls = new[]
+        {
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover1",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover2",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover3",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover4",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover5"
+        };
+
+        foreach (var bookCoverUrl in bookCoverUrls)
+        {
+            var response = await httpclient.GetAsync(bookCoverUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var bookCover = JsonSerializer.Deserialize<BookCoverDto>(await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions()
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                if (bookCover != null)
+                {
+                    bookCovers.Add(bookCover);
+                }
+            }
+        }
+        return bookCovers;
+    }
+    public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessAfterWaitForAllAsync(Guid bookId)
+    {
+        var httpclient = _httpClientFactory.CreateClient();
+        var bookCovers = new List<BookCoverDto>();
+        var bookCoverUrls = new[]
+        {
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover1",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover2",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover3",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover4",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover5"
+        };
+
+        var bookCoversTasks = bookCoverUrls.Select(bookCoverUrl => httpclient.GetAsync(bookCoverUrl)).ToList();
+
+        var bookCoverTaskResults = await Task.WhenAll(bookCoversTasks);
+        foreach (var bookCoverTaskResult in bookCoverTaskResults.Reverse())
+        {
+            var bookCover = JsonSerializer.Deserialize<BookCoverDto>(await bookCoverTaskResult.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            if (bookCover != null)
+            {
+                bookCovers.Add(bookCover);
+            }
+        }
+        return bookCovers;
+    }
 }
