@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Books.API.Entities;
 using Books.API.Filters;
+using Books.API.Models;
 using Books.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +27,15 @@ public class BooksController : ControllerBase
     {
         var bookEntities = await _booksRepository.GetBooksAsync();
         return Ok(bookEntities);
+    }
+    [HttpGet("booksstream")]
+    public async IAsyncEnumerable<BookDto> StreamBooks()
+    {
+        await foreach (var book in _booksRepository.GetBooksAsAsyncEnumerable())
+        {
+            await Task.Delay(500);
+            yield return _mapper.Map<BookDto>(book);
+        }
     }
 
     [HttpGet("books/{id}", Name = "GetBookAsync")]

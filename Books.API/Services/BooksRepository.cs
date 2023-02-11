@@ -31,6 +31,10 @@ public class BooksRepository : IBooksRepository
     {
         return await _context.Books!.Include(x => x.Author).ToListAsync();
     }
+    public IAsyncEnumerable<Book> GetBooksAsAsyncEnumerable()
+    {
+        return _context.Books!.AsAsyncEnumerable<Book>();
+    } 
 
     public async Task<Book?> GetBookAsync(Guid id)
     {
