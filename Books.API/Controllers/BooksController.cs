@@ -47,6 +47,7 @@ public class BooksController : ControllerBase
         {
             return NotFound();
         }
+        var bookCover = await _booksRepository.GetBookCoverAsync("dummycover");
         return Ok(bookEntity);
     }
 

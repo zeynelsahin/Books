@@ -1,5 +1,7 @@
-﻿using Books.API.DbContexts;
+﻿using System.Text.Json;
+using Books.API.DbContexts;
 using Books.API.Entities;
+using Books.API.Models.External;
 using Microsoft.EntityFrameworkCore;
 
 namespace Books.API.Services;
@@ -7,10 +9,12 @@ namespace Books.API.Services;
 public class BooksRepository : IBooksRepository
 {
     private readonly BooksContext _context;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public BooksRepository(BooksContext context)
+    public BooksRepository(BooksContext context, IHttpClientFactory httpClientFactory)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
+        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
     }
 
     public IEnumerable<Book> GetBooks()
@@ -24,7 +28,7 @@ public class BooksRepository : IBooksRepository
     }
     public async Task<IEnumerable<Book>> GetBooksAsync(IEnumerable<Guid> bookIds)
     {
-        return await _context.Books!.Where(b => bookIds.Contains(b.Id)).Include(b=>b.Author).ToListAsync();
+        return await _context.Books!.Where(b => bookIds.Contains(b.Id)).Include(b => b.Author).ToListAsync();
     }
 
     public async Task<IEnumerable<Book>> GetBooksAsync()
@@ -34,7 +38,7 @@ public class BooksRepository : IBooksRepository
     public IAsyncEnumerable<Book> GetBooksAsAsyncEnumerable()
     {
         return _context.Books!.AsAsyncEnumerable<Book>();
-    } 
+    }
 
     public async Task<Book?> GetBookAsync(Guid id)
     {
@@ -53,6 +57,19 @@ public class BooksRepository : IBooksRepository
 
     public async Task<bool> SaveChangesAsync()
     {
-        return await _context.SaveChangesAsync()>0;
+        return await _context.SaveChangesAsync() > 0;
     }
-} 
+    public async Task<BookCoverDto?> GetBookCoverAsync(string id)
+    {
+        var httpClient = _httpClientFactory.CreateClient();
+        var response = await httpClient.GetAsync($"https://localhost:44365/api/bookCovers/{id}");
+
+        return response.IsSuccessStatusCode
+            ? JsonSerializer.Deserialize<BookCoverDto>(await response.Content.ReadAsStringAsync(),
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                })
+            : null;
+    }
+}

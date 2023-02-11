@@ -1,5 +1,4 @@
-﻿using Books.API.Entities;
-
+﻿
 namespace Books.API.Services;
 
 public interface IBooksRepository
@@ -8,8 +7,10 @@ public interface IBooksRepository
     Entities.Book? GetBook(Guid id);
     Task<IEnumerable<Entities.Book>> GetBooksAsync(IEnumerable<Guid> bookIds);
     Task<IEnumerable<Entities.Book>> GetBooksAsync();
-    IAsyncEnumerable<Book>  GetBooksAsAsyncEnumerable();
+    IAsyncEnumerable<Entities.Book>  GetBooksAsAsyncEnumerable();
     Task<Entities.Book?> GetBookAsync(Guid id);
-    void AddBook(Book bookToAdd);
+    void AddBook(Entities.Book bookToAdd);
     Task<bool> SaveChangesAsync();
+
+    Task<Models.External.BookCoverDto?> GetBookCoverAsync(string id);
 }
