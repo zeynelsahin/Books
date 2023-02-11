@@ -39,7 +39,8 @@ public class BooksController : ControllerBase
     }
 
     [HttpGet("books/{id}", Name = "GetBookAsync")]
-    [TypeFilter(typeof(BookResultFilter))]
+    [TypeFilter(typeof(BookWithCoversResultFilter))]
+    // [TypeFilter(typeof(BookResultFilter))]
     public async Task<IActionResult> GetBooks(Guid id)
     {
         var bookEntity = await _booksRepository.GetBookAsync(id);
@@ -48,11 +49,12 @@ public class BooksController : ControllerBase
             return NotFound();
         }
         // var bookCover = await _booksRepository.GetBookCoverAsync("dummycover");
-        
-         // var bookCovers= await _booksRepository.GetBookCoversProcessOneByOneAsync(id) ;
-         var bookCovers = await _booksRepository.GetBookCoversProcessAfterWaitForAllAsync(id);
-         
-        return Ok(bookEntity);
+
+        // var bookCovers= await _booksRepository.GetBookCoversProcessOneByOneAsync(id) ;
+        var bookCovers = await _booksRepository.GetBookCoversProcessAfterWaitForAllAsync(id);
+
+
+        return Ok(( bookEntity, bookCovers));
     }
 
     [HttpPost("books")]
@@ -63,6 +65,6 @@ public class BooksController : ControllerBase
         _booksRepository.AddBook(bookEntity);
         await _booksRepository.SaveChangesAsync();
         await _booksRepository.GetBookAsync(bookEntity.Id);
-        return CreatedAtRoute("GetBookAsync", new { id = bookEntity.Id }, bookEntity );
+        return CreatedAtRoute("GetBookAsync", new { id = bookEntity.Id }, bookEntity);
     }
 }
