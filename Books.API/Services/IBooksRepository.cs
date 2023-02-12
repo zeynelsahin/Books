@@ -13,6 +13,6 @@ public interface IBooksRepository
     Task<bool> SaveChangesAsync();
 
     Task<Models.External.BookCoverDto?> GetBookCoverAsync(string id);
-    Task<IEnumerable<Models.External.BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId);
+    Task<IEnumerable<Models.External.BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId,CancellationToken cancellationToken);
     Task<IEnumerable<Models.External.BookCoverDto>> GetBookCoversProcessAfterWaitForAllAsync(Guid bookId);
 }

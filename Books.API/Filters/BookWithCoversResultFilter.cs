@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Books.API.Filters;
 
-public class BookWithCoversResultFilter: IAsyncResultFilter
+public class BookWithCoversResultFilter : IAsyncResultFilter
 {
 
     private readonly IMapper _mapper;
@@ -17,16 +17,16 @@ public class BookWithCoversResultFilter: IAsyncResultFilter
     {
         var resultFromAction = context.Result as ObjectResult;
 
-        if (resultFromAction?.Value==null || resultFromAction.StatusCode <200 || resultFromAction.StatusCode>=300)
+        if (resultFromAction?.Value == null || resultFromAction.StatusCode is < 200 or >= 300)
         {
             await next();
         }
 
-        var (book,bookCovers)  = ((Entities.Book book, IEnumerable<Models.External.BookCoverDto> bookCovers))resultFromAction!.Value! ;
+        var (book, bookCovers) = ((Entities.Book book, IEnumerable<Models.External.BookCoverDto> bookCovers))resultFromAction!.Value!;
 
         var mappedBook = _mapper.Map<BookWithCoversDto>(book);
         resultFromAction.Value = _mapper.Map(bookCovers, mappedBook);
-        
+
         await next();
     }
 }

@@ -72,10 +72,12 @@ public class BooksRepository : IBooksRepository
                 })
             : null;
     }
-    public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId)
+    public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId,CancellationToken cancellationToken)
     {
         var httpclient = _httpClientFactory.CreateClient();
         var bookCovers = new List<BookCoverDto>();
+
+
         var bookCoverUrls = new[]
         {
             $"https://localhost:44365/api/bookCovers/{bookId}-dummycover1",
@@ -85,23 +87,36 @@ public class BooksRepository : IBooksRepository
             $"https://localhost:44365/api/bookCovers/{bookId}-dummycover5"
         };
 
-        foreach (var bookCoverUrl in bookCoverUrls)
+        using (var cancellationTokenSource = new CancellationTokenSource())
         {
-            var response = await httpclient.GetAsync(bookCoverUrl);
-            if (response.IsSuccessStatusCode)
+            using (var linkedCancellationTokenSource= CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token,cancellationToken))
             {
-                var bookCover = JsonSerializer.Deserialize<BookCoverDto>(await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions()
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                if (bookCover != null)
+                foreach (var bookCoverUrl in bookCoverUrls)
                 {
-                    bookCovers.Add(bookCover);
+                    var response = await httpclient.GetAsync(bookCoverUrl, linkedCancellationTokenSource.Token);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var bookCover = JsonSerializer.Deserialize<BookCoverDto>(await response.Content.ReadAsStringAsync(linkedCancellationTokenSource.Token),
+                            new JsonSerializerOptions()
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                        if (bookCover != null)
+                        {
+                            bookCovers.Add(bookCover);
+                        }
+                    }
+                    else
+                    {
+                        cancellationTokenSource.Cancel();
+                    }
                 }
             }
+            
         }
+        
+
         return bookCovers;
     }
     public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessAfterWaitForAllAsync(Guid bookId)
