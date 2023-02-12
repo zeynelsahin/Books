@@ -72,7 +72,7 @@ public class BooksRepository : IBooksRepository
                 })
             : null;
     }
-    public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId,CancellationToken cancellationToken)
+    public async Task<IEnumerable<BookCoverDto>> GetBookCoversProcessOneByOneAsync(Guid bookId, CancellationToken cancellationToken)
     {
         var httpclient = _httpClientFactory.CreateClient();
         var bookCovers = new List<BookCoverDto>();
@@ -89,7 +89,7 @@ public class BooksRepository : IBooksRepository
 
         using (var cancellationTokenSource = new CancellationTokenSource())
         {
-            using (var linkedCancellationTokenSource= CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token,cancellationToken))
+            using (var linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, cancellationToken))
             {
                 foreach (var bookCoverUrl in bookCoverUrls)
                 {
@@ -113,9 +113,8 @@ public class BooksRepository : IBooksRepository
                     }
                 }
             }
-            
         }
-        
+
 
         return bookCovers;
     }
@@ -149,5 +148,37 @@ public class BooksRepository : IBooksRepository
             }
         }
         return bookCovers;
+    }
+
+
+    public async Task<IEnumerable<BookCoverDto>> DownloadBookCoverAsync_BadCode(Guid bookId)
+    {
+        var httpClient = _httpClientFactory.CreateClient();
+        var bookCoverUrls = new[]
+        {
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover1",
+            $"https://localhost:44365/api/bookCovers/{bookId}-dummycover2",
+        };
+        var bookCovers = new List<BookCoverDto>();
+        var downloadTask1 = DownloadBookCoverAsync(bookCoverUrls[0], bookCovers);
+        var downloadTask2 = DownloadBookCoverAsync(bookCoverUrls[1], bookCovers);
+
+        await Task.WhenAll(downloadTask1, downloadTask2);
+        return bookCovers;
+    }
+    private async Task DownloadBookCoverAsync(string bookCoverUrl, List<BookCoverDto> bookCovers)
+    {
+        var httpClient = _httpClientFactory.CreateClient();
+        var response = await httpClient.GetAsync(bookCoverUrl);
+
+        var bookCover = JsonSerializer.Deserialize<BookCoverDto>(await response.Content.ReadAsStreamAsync(),
+            new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        if (bookCover != null)
+        {
+            bookCovers.Add(bookCover);
+        }
     }
 }

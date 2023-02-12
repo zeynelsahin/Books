@@ -3,6 +3,7 @@ using Books.API.Entities;
 using Books.API.Filters;
 using Books.API.Models;
 using Books.API.Services;
+using Books.Legacy;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Books.API.Controllers;
@@ -23,9 +24,9 @@ public class BooksController : ControllerBase
 
     [HttpGet("books")]
     [TypeFilter(typeof(BooksResultFilter))]
-    public async Task<IActionResult> GetBooks()
+    public  IActionResult GetBooks_BadCode()
     {
-        var bookEntities = await _booksRepository.GetBooksAsync();
+        var bookEntities =  _booksRepository.GetBooksAsync().Result;
         return Ok(bookEntities);
     }
     [HttpGet("booksstream")]
@@ -48,6 +49,9 @@ public class BooksController : ControllerBase
         {
             return NotFound();
         }
+
+
+        // var amountOfPages = await GetBookPages_BadCode(id);
         // var bookCover = await _booksRepository.GetBookCoverAsync("dummycover");
 
         var bookCovers= await _booksRepository.GetBookCoversProcessOneByOneAsync(id,cancellationToken) ;
@@ -57,6 +61,14 @@ public class BooksController : ControllerBase
         return Ok(( bookEntity, bookCovers));
     }
 
+    private Task<int> GetBookPages_BadCode(Guid id)
+    {
+        return Task.Run(() =>
+        {
+            var pageCalculator = new ComplicatedPageCalculator();
+            return pageCalculator.CalculateBookPages(id);
+        });
+    }
     [HttpPost("books")]
     [TypeFilter(typeof(BookResultFilter))]
     public async Task<IActionResult> CreateBook([FromBody] BookForCreationDto bookForCreationDto)
